@@ -9,7 +9,7 @@ def pull_fp_data() -> pd.DataFrame:
     # part 1 of the url (need to concatenate offset to get all players)
     urlpt1 = "https://www.fantasypros.com/nfl/projections/"
     urlpt2 = ".php?week=draft"
-    pos_list = ["rb", "qb", "wr", "dst", "td", "k"]
+    pos_list = ["rb", "qb", "wr", "dst", "te", "k"]
 
     # lists to fill with data
     names = []
@@ -46,5 +46,3 @@ def pull_fp_data() -> pd.DataFrame:
 
     #return a dataframe with the data
     return pd.DataFrame({'name': names, 'position': pos, 'proj': pts})
-
-pull_fp_data()
