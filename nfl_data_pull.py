@@ -42,4 +42,3 @@ def pull_nfl_data() -> pd.DataFrame:
 
     # return a dataframe with the data
     return pd.DataFrame({'name': names, 'position': pos, 'proj': pts})
-pull_nfl_data()
