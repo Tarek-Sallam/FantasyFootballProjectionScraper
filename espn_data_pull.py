@@ -8,7 +8,7 @@ import os
 import pandas as pd
 import json
 
-def pull_espn_data() -> None:
+def pull_espn_data(path) -> None:
     url = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leaguedefaults/3?scoringPeriodId=0&view=kona_player_info"
     headers = {
         #"Accept": "application/json",
@@ -21,5 +21,5 @@ def pull_espn_data() -> None:
     }
     page = rq.get(url = url, headers = headers)
     content = page.json();
-    with open(os.path.join(os.getcwd(), "raw_data", "espn.json"), "w") as f:
+    with open(os.path.join(path, "espn_raw.json"), "w") as f:
         json.dump(content, f, indent=4)
