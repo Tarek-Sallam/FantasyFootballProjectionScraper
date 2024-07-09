@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 import os
 
+def find_proj(row: object, df: pd.DataFrame) -> object:
+    return (df[df['name'] == row["name"]]['proj'].item())
+    
 # load csvs
 espn = pd.read_csv(os.path.join(os.getcwd(), "csv_data", "espn.csv"))
 nfl = pd.read_csv(os.path.join(os.getcwd(), "csv_data", "nfl.csv"))
@@ -29,4 +32,10 @@ not_in_espn = not_in_espn.assign(proj = 0)
 espn = pd.concat([espn, not_in_espn], ignore_index=True).reset_index(drop=True)
 print("After adding the extra NFL players into ESPN dataset: ")
 espn = espn.drop_duplicates(subset=['name'])
+data = nfl
+data['proj'] = nfl.apply(lambda x: ((find_proj(x, espn)) + x.proj) / 2, axis=1)
+data = data.sort_values(by=['proj'], ascending=False).reset_index(drop=True)
+print("Weighted Data: ")
+print(data)
+data.to_csv(os.path.join(os.getcwd(), 'weighted_data', 'weighted_data.csv'), index=False)
 
