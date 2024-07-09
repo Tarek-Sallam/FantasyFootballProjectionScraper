@@ -7,14 +7,26 @@ espn = pd.read_csv(os.path.join(os.getcwd(), "csv_data", "espn.csv"))
 nfl = pd.read_csv(os.path.join(os.getcwd(), "csv_data", "nfl.csv"))
 
 # get all the rows that the names are not in the other dataset
-not_in_espn = nfl.loc[~((nfl["last_name"].isin(espn["last_name"])) & (nfl["first_name"].isin(espn["first_name"])))]
-not_in_nfl = espn.loc[~((espn["last_name"].isin(nfl["last_name"])) & (espn["first_name"].isin(nfl["first_name"])))]
+not_in_nfl = espn.loc[~espn["name"].isin(nfl["name"])].reset_index(drop=True)
+not_in_espn = nfl.loc[~nfl["name"].isin(espn["name"])].reset_index(drop=True)
 
-# remove all names that aren't in the nfl dataset from the espn dataset (since we can't draft them anyways)
-espn2 = espn.loc[~(espn["last_name"].isin(not_in_nfl["last_name"]) & (espn["first_name"].isin(not_in_nfl["first_name"])))];
+non_zero_nfl = not_in_nfl[not_in_nfl['proj'] != 0].reset_index(drop=True)
+non_zero_espn = not_in_espn[not_in_espn['proj'] != 0].reset_index(drop=True)
 
-# set all the names that aren't in the espn dataset to 0
-not_in_espn["proj"] = not_in_espn["proj"].apply(lambda x: 0.0)
+print("Players not in the ESPN data but in NFL data (need to add to ESPN data): ")
+print(non_zero_espn[['first_name', 'last_name', 'proj']])
+print("Players not in NFL data but in ESPN data (can remove from ESPN data): ")
+print(non_zero_nfl[['first_name', 'last_name', 'proj']])
 
-# add all the names that aren't in the espn dataset to the espn dataset
-espn2 = pd.concat([espn2, not_in_espn])
+print("Before removing extra players in ESPN: ")
+print(espn)
+# remove the espn players that aren't in the NFL dataset
+espn = espn.loc[~(espn['name'].isin(not_in_nfl['name']))].reset_index(drop=True)
+print("After removing extra players in ESPN: ")
+print(espn)
+
+not_in_espn = not_in_espn.assign(proj = 0)
+espn = pd.concat([espn, not_in_espn], ignore_index=True).reset_index(drop=True)
+print("After adding the extra NFL players into ESPN dataset: ")
+espn = espn.drop_duplicates(subset=['name'])
+

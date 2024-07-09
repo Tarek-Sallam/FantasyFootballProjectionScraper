@@ -10,9 +10,35 @@ def clean_espn_data(rawpath, path) -> None:
     firstNames = [player["player"]["firstName"] for player in players]
     lastNames = [player["player"]["lastName"] for player in players]
     displayNames = [player["player"]["fullName"] for player in players]
-    firstNames = [name.replace('III', '').replace('II', '').replace('JR.', '').replace('SR.', '').replace(" V", '').replace('É', 'E').strip().replace(' ', '').replace('-', '').upper() for name in firstNames]
-    lastNames = [name.replace('III', '').replace('II', '').replace('JR.', '').replace('SR.', '').replace(" V", '').replace('É', 'E').strip().replace(' ', '').replace('-', '').upper() for name in lastNames]
+    firstNames = [name.upper().replace('III', '').replace('II', '').replace('JR.', '').replace('SR.', '').replace(" V", '').replace('É', 'E').replace("'", '').strip().replace(' ', '').replace('-', '') for name in firstNames]
+    lastNames = [name.upper().replace('III', '').replace('II', '').replace('JR.', '').replace('SR.', '').replace(" V", '').replace('É', 'E').replace("'", '').strip().replace(' ', '').replace('-', '') for name in lastNames]
     names = [firstName+lastName for firstName, lastName in zip(firstNames, lastNames)]
+    for i in range(len(lastNames)):
+        if lastNames[i] == 'D/ST':
+            lastNames[i] = firstNames[i]
+            names[i] = firstNames[i]
+        if firstNames[i] == 'JOSHUA':
+            firstNames[i] = 'JOSH'
+            names[i] = firstNames[i] + lastNames[i]
+        if firstNames[i] == 'CEDRICK':
+            firstNames[i] = 'CED'
+            names[i] = firstNames[i] + lastNames[i]
+        if firstNames[i] == 'MICHAEL':
+            firstNames[i] = 'MIKE'
+            names[i] = firstNames[i] + lastNames[i]
+        if lastNames[i] == 'OGLETREE':
+            firstNames[i] = 'ANDREW'
+            names[i] = firstNames[i] + lastNames[i]
+        if lastNames[i] == 'FORTSON' and firstNames[i] == 'JODY':
+            firstNames[i] = 'JOSEPH'
+            names[i] = firstNames[i] + lastNames[i]
+        if lastNames[i] == 'MILLER' and firstNames[i] == 'SCOTTY':
+            firstNames[i] = 'SCOTT'
+            names[i] = firstNames[i] + lastNames[i]
+        if lastNames[i] == 'ESKRIDGE' and firstNames[i] == 'DEE':
+            firstNames[i] = 'DWAYNE'
+            names[i] = firstNames[i] + lastNames[i]
+        
     #stats = [player["player"]["stats"] for player in players]
     pts = [player["player"]["stats"][len(player["player"]["stats"])-1].get("appliedTotal", 0) for player in players]
     
